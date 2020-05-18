@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t mullaneyp/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run mullaneyp/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t mullaneyp/multi-client ./client
+  - docker build -t mullaneyp/multi-nginx ./nginx
+  - docker build -t mullaneyp/multi-server ./server
+  - docker build -t mullaneyp/multi-worker ./worker
+  # Connect with docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take above images and push to Docker Hub
+  - docker push mullaneyp/multi-client
+  - docker push mullaneyp/multi-nginx
+  - docker push mullaneyp/multi-server
+  - docker push mullaneyp/multi-worker
