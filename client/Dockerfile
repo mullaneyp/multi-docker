@@ -14,4 +14,4 @@ EXPOSE 3000
 # Copy nginx defualt.conf file and overwerite existing default.conf file
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 # copy production build assets from builder phase
-COPY --from-builder /app/build /usr/share/nginx/html
+COPY --from=builder /app/build /usr/share/nginx/html
